@@ -17,12 +17,6 @@
                           <label class="form-label" for="name">Full Name</label>
                         <input type="text" formControlName="fullName" class="form-control" />
                       </div>
-                      <div class="col-md-5">
-                        <em *ngIf="validateControl('fullName') 
-                        && hasError('fullName', 'required')">Full Name is required</em>
-                        <em *ngIf="validateControl('fullName') 
-                        && hasError('fullName', 'maxlength')">Minimum allowed length is 8 characters.</em>
-                      </div>
                     </div>
   
                     <div class="d-flex flex-row align-items-center">
