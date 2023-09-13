@@ -10,8 +10,7 @@ export class UserRepositoryService {
   constructor(private http: HttpClient) { }
   urlAddress: string = 'http://localhost:5062/api/user/user';
   public createUser = (route: string, user: User) => {
-    console.log("repositor call",user)
-    return this.http.post<User>(this.urlAddress, user, this.generateHeaders());
+    return this.http.post<any>(this.urlAddress, user, this.generateHeaders());
   }
 
   // private createCompleteRoute = (route: string, url: string) => {

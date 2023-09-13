@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ErrorModalComponent } from './../modals/error-modal/error-modal.component';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { SuccessModalComponent } from '../modals/success-modal/success-modal.component';
 
 @Injectable({
   providedIn: 'root'
@@ -28,18 +29,18 @@ export class ErrorHandlerService {
           okButtonText: "Ok"
         }
       };
-      this.modal.show(ErrorModalComponent, config);
+      this.modal.show(SuccessModalComponent, config);
     }
 }
 
 private handle404Error = (error: HttpErrorResponse) => {
   this.createErrorMessage(error);
-  this.router.navigate(['/404']);
+  //this.router.navigate(['/404']);
 }
 
 private handle500Error = (error: HttpErrorResponse) => {
   this.createErrorMessage(error);
-  this.router.navigate(['/500']);
+  //this.router.navigate(['/500']);
 }
 
 private handleOtherError = (error: HttpErrorResponse) => {

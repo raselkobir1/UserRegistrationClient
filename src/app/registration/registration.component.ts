@@ -5,9 +5,8 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandlerService } from '../shared/services/error-handler.service.service';
-//import { ModalOptions, BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { NotificationService } from '../shared/services/notification.service.service';
-
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-registration',
@@ -15,15 +14,15 @@ import { NotificationService } from '../shared/services/notification.service.ser
   styleUrls: ['./registration.component.css']
 })
 export class RegistrationComponent {
-  errorMessage: string = '';
+  errorMessage: string ='' ;
   public homeText: string;
   userForm: FormGroup; 
-  //bsModalRef?: BsModalRef;
   user = {} as User;
-  constructor(private repository: UserRepositoryService,private formBuilder: FormBuilder,private router: Router,private errorHandler: ErrorHandlerService,private notification: NotificationService) 
+  constructor(private repository: UserRepositoryService,private formBuilder: FormBuilder,private router: Router,private errorHandler: ErrorHandlerService,private notification: NotificationService, private modal: BsModalService) 
   { 
     this.homeText = "WELCOME TO User Registration APP";
     this.createFormInstance();
+
   }
   
   ngOnInit(): void {
@@ -32,27 +31,24 @@ export class RegistrationComponent {
       userName: new FormControl('', [Validators.required]),
       password: new FormControl('', [Validators.required]),
       email: new FormControl('', [Validators.required]),
-      address: new FormControl('', [Validators.required, Validators.maxLength(100)]),
-      mobileNumber: new FormControl('', [Validators.required, Validators.maxLength(100)])
+      address: new FormControl(''),
+      mobileNumber: new FormControl('')
     });
   }
 
   createFormInstance(){
     this.userForm = this.formBuilder.group({
-      fullName:[''],
+      fullName:['', Validators.required],
       userName: ['',Validators.required],
       password: ['', Validators.required],
-      email:[''],
-      mobileNumber:['']
+      email:['', Validators.required],
+      address:['', Validators.required],
+      mobileNumber:['', Validators.required]
     })
   }
-  fullName: string;
-  userName: Date;
-  email: string;
-  address: string;
-  mobileNumber: string;
 
   onClickRegister() {
+    this.errorMessage = '';
     const apiUri: string = `api/User/user`;
     this.user = {
       fullName : this.userForm.controls.fullName.value,
@@ -62,26 +58,26 @@ export class RegistrationComponent {
       address : this.userForm.controls.address.value,
       mobileNumber : this.userForm.controls.mobileNumber.value,
     }
-    console.log('obj :', this.user);
-
-    
     this.repository.createUser(apiUri, this.user).subscribe({
-      next: (res:any)=>{
-        var x = res;
-        console.log('Registration result :',x);
-        this.notification.showSuccess("User successfully Created", "Success");
+      next: (res:any)=> {
+        try {
+          this.notification.showSuccess(res, "Success");
+        } catch (parseError) {
+          console.log(JSON.parse(parseError));
+        }
       },
       error: (err: HttpErrorResponse) => {
-        this.errorHandler.handleError(err);
-        this.errorMessage = this.errorHandler.errorMessage;
-        console.log('customize error :',this.errorMessage)
-        console.log('full error :',err)
-        //this.notification.showError("Somethisng wrong", "Success");
+        this.errorMessage = '';
+        this.errorMessage = err.error;
+        //console.log("error",err.error);
+        //#region 
+        if(err.error.text=="User created successfully" || err.error.text=="User already exists for thsi user name"){
+        this.notification.showSuccess(err.error.text, "Success");
+        //#endregion
+        }
     }
     })
-    console.log('obj :', this.user);
   }
-
 
   validateControl = (controlName: string) => {
     if (this.userForm.get(controlName).invalid && this.userForm.get(controlName).touched)
@@ -95,5 +91,4 @@ export class RegistrationComponent {
     
     return false;
   }
-
   }

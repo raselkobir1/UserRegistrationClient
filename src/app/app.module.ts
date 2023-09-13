@@ -12,6 +12,7 @@ import { SuccessModalComponent } from './shared/modals/success-modal/success-mod
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { ToastrModule } from 'ngx-toastr';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -22,12 +23,24 @@ import { ToastrModule } from 'ngx-toastr';
   ],
   imports: [
     ModalModule.forRoot(),
-    ToastrModule.forRoot(),
+    //ToastrModule.forRoot(),
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
     ReactiveFormsModule,
+    ToastrModule.forRoot({
+      timeOut: 10000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+      countDuplicates: true,
+      maxOpened: 3,
+      closeButton: true,
+      easeTime: 1000,
+      enableHtml: true,
+      progressBar: true,
+      onActivateTick: true,
+    }),
     
   ],
   providers: [],
